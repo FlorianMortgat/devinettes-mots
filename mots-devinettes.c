@@ -10,6 +10,7 @@
 #include "stdio.h"
 #include "time.h"
 #include "assert.h"
+#include "string.h"
 
 #define C_W 25
 #define I_TABOO 0
@@ -20,6 +21,7 @@
 #define C_T1 8
 #define I_T2 (I_T1+C_T1)
 #define C_T2 7
+#define STRIKECOL 45
 
 #define Mo (1024*1024)
 
@@ -28,6 +30,44 @@
 int randint(int upper_boundary) {
 	// 0 <= return value < upper_boundary
 	return rand() % upper_boundary;
+}
+
+int len_utf(char *s) {
+	int l,i;
+	while (l < 200 && s[i]) {
+		if ((unsigned char)s[i] != 195) l++;
+	}
+	return l;
+}
+
+char* pad20(char* s) {
+	// non-generic, pad to 20 chars + \0
+	// make room for non-ascii characters
+	char *ret = (char*)malloc(41);
+	int pad = 0;
+	int i;
+	int mblen = 0;
+	unsigned char c = 1;
+	for (i = 0; mblen < 18 && i < 40; i++) {
+		c = (unsigned char) s[i];
+		ret[i] = (char) c;
+		switch (c) {
+			case 0:
+				pad=1;
+				mblen++;
+				break;
+			case 195:
+				break;
+			case 197:
+				break;
+			default:
+				mblen++;
+				break;
+		}
+		ret[i] = pad ? '.' : s[i];
+	}
+	ret[i] = 0;
+	return ret;
 }
 
 void shuffle_array(int *arr, int count) {
@@ -59,6 +99,7 @@ typedef struct {
 	char *deck_words_data;
 	int *deck_words;
 	int deck_words_count;
+	int striked_words[C_W];
 	// helper pointers: they point inside
 	// the deck_words array.
 	int *board, *taboo, *t1, *t2, *neutral;
@@ -71,6 +112,9 @@ int game_load_deck(Game* game);
 
 int game_init(Game* game) {
 	game_load_deck(game);
+	for (int i = 0; i < C_W; i++) {
+		game->striked_words[i] = 0;
+	}
 	shuffle_array(game->deck_words,
 			game->deck_words_count);
   for (int i = 0; i < C_W; i++) {
@@ -127,34 +171,117 @@ int game_load_deck(Game* game) {
 	return 1;
 }
 
-int game_print(Game* game) {
+int get_color(int word_index) {
+	int ret;
+	if (word_index >= I_TABOO) ret = 36;
+	if (word_index >= I_NEUTRAL) ret = 33;
+	if (word_index >= I_T1) ret = 31;
+	if (word_index >= I_T2) ret = 34;
+	return ret;
+}
+
+int game_print(Game* game, char blind) {
+	int color[2] = {37,37};
+	char w[2][20];
+	printf("\033[2J");
 	printf("All words:\n");
-	for (int i = 0; i < C_W; i++) {
-		printf("\t%s\n",
-				game->deck_words_data +
-					game->shuffled[i]);
-	}
-	int color = 33;
-	for (int i = 0; i < C_W; i++) {
-		if (i == I_TABOO) color = 36;
-		if (i == I_NEUTRAL) color = 33;
-		if (i == I_T1) color = 31;
-		if (i == I_T2) color = 34;
-		printf("  \033[%dm%s\033[0m\n",
-				color,
-				game->deck_words_data +
-				  game->board[i]);
+	for (int i = 0; i < C_W; i+=2) {
+		for (int col = 0; col < 2; col++){
+			if (i+col >= C_W) {
+				w[col][0]=0;
+				color[col] = 30;
+				continue;
+			}
+			color[col] = game->striked_words[i+col]?
+				STRIKECOL : (blind ? 
+						37 : get_color(i+col));
+			strcpy(
+					w[col],
+					game->deck_words_data +
+						(blind ?
+							game->shuffled[i+col]
+							: game->board[i+col])
+			);
+		}
+		printf("%2d \033[%dm%s\033[0m"
+				" %2d \033[%dm%s\033[0m\n",
+				i+1,
+				color[0],
+				pad20(w[0]),
+				i+2,
+				color[1],
+				pad20(w[1]));
 	}
 	
-	return EXIT_SUCCESS;
+	return 1;
+}
+
+int code_to_int(char code[10]) {
+	return 0;
+}
+
+int get_code_from_user() {
+	char str_code[10];
+	scanf("%3s", str_code);
+	return atoi(str_code);
+}
+
+int game_is_finished(Game *game) {
+	int i;
+	for (i = 0; i < C_W; i++) {
+		if (game->striked_words[i] == 0)
+			return 0;
+	}
+	return 1;
+}
+
+long int randomize_5min() {
+	long int seconds = (long int) time(NULL);
+	// 5 minutes
+	srand(seconds / 300);
+	return seconds / 300;
 }
 
 int main(int argc, char *argv[]) {
 	Game game;
-	srand(time(NULL));
+	int code;
+	char blind;
+	char response_1=0;
+	char response_2[2];
+	// num will store the index of the next word to be striked
+	int num = 0;
+	randomize_5min();
+	while(
+			response_1 != 'o' &&
+			response_1 != 'n') {
+		puts("Êtes-vous du côté aveugle (o/n)?");
+		scanf("%1s", &response_1);
+	}
+	switch(response_1) {
+		case 'o':
+			blind=1;
+			break;
+		case 'n':
+			blind=0;
+			break;
+	}
 
 	game_init(&game);
-	
-	game_print(&game);
+
+	while(!game_is_finished(&game)) {
+  	game_print(&game, blind);
+		puts("Please enter the index of a word"
+				" (or 0 to exit).");
+		num = get_code_from_user();
+		if (num == 0) break;
+		if (num > C_W
+				|| num < 1) {
+			continue;
+		}
+		num--;
+		game.striked_words[num] =
+			!game.striked_words[num];
+	}
 	game_free(&game);
+	return EXIT_SUCCESS;
 }
