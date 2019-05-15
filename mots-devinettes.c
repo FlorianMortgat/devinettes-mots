@@ -1,11 +1,27 @@
 /*
- * This implements the setting up of a words
- * game in which the players have to pick
- * the right words in a list with only two
- * hints provided by teammates:
- * -
+ * C implementation by:
+ *    Bzhu-Noors
  *
- */
+ * Word list by:
+ *    Bzhu-Noors
+ *
+ * Inspired by Codenames, by:
+ *    Vlaada Chvátil
+ *
+ * Notice: this C program does not implement
+ * the "business logic" of the original game:
+ * it only helps setting it up.
+ *
+ * You are therefore not bound to any set of
+ * rules.
+ *
+ * The very general idea is to have one
+ * knowing team member and a guessing team
+ * member: the knowing one gives hints to 
+ * the guessing one to help them guess which
+ * words are what color.
+ *
+ * */
 #include "stdlib.h"
 #include "stdio.h"
 #include "time.h"
