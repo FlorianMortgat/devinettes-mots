@@ -15,12 +15,6 @@
  * You are therefore not bound to any set of
  * rules.
  *
- * The very general idea is to have one
- * knowing team member and a guessing team
- * member: the knowing one gives hints to 
- * the guessing one to help them guess which
- * words are what color.
- *
  * */
 #include "stdlib.h"
 #include "stdio.h"
@@ -43,6 +37,13 @@
 
 #define WORDLIST_PATH "wordlist.txt"
 
+/**
+ * Returns a pseudo-random number between 0 and
+ * upper_boundary (not included).
+ * Note that the distribution will not be totally
+ * homogenous because we simply use modulo to
+ * coerce the random number to the desired range.
+ */
 int randint(int upper_boundary) {
 	// 0 <= return value < upper_boundary
 	return rand() % upper_boundary;
@@ -145,12 +146,18 @@ int game_init(Game* game) {
 	return 1;
 }
 
+/**
+ * Frees the memory used by game data.
+ */
 int game_free(Game* game) {
 	free(game->deck_words_data);
 	free(game->deck_words);
 	return 1;
 }
 
+/**
+ * Loads the word list from an external file.
+ */
 int game_load_deck(Game* game) {
 	FILE *f = fopen(WORDLIST_PATH, "r");
 	int filesize = fsize(f);
@@ -187,6 +194,9 @@ int game_load_deck(Game* game) {
 	return 1;
 }
 
+/**
+ * Maps terminal colors to word indices.
+ */
 int get_color(int word_index) {
 	int ret;
 	if (word_index >= I_TABOO) ret = 36;
@@ -196,6 +206,11 @@ int get_color(int word_index) {
 	return ret;
 }
 
+/**
+ * This function displays the current game board.
+ * The words are displayed differently depending on
+ * whether the player is a guesser or a “knower”.
+ */
 int game_print(Game* game, char blind) {
 	int color[2] = {37,37};
 	char w[2][20];
@@ -232,16 +247,18 @@ int game_print(Game* game, char blind) {
 	return 1;
 }
 
-int code_to_int(char code[10]) {
-	return 0;
-}
-
+/**
+ * This function returns a number entered by the player.
+ */
 int get_code_from_user() {
 	char str_code[10];
 	scanf("%3s", str_code);
 	return atoi(str_code);
 }
 
+/**
+ * This returns true when all the words have been striked out.
+ */
 int game_is_finished(Game *game) {
 	int i;
 	for (i = 0; i < C_W; i++) {
@@ -251,6 +268,12 @@ int game_is_finished(Game *game) {
 	return 1;
 }
 
+/**
+ * this function initializes the pseudo-random number generator
+ * using the current time modulo 5 minutes. That way, each player
+ * can play on their own smarphones: even with no network at all,
+ * the games will draw the same words for all players.
+ */
 long int randomize_5min() {
 	long int seconds = (long int) time(NULL);
 	// 5 minutes
@@ -285,7 +308,7 @@ int main(int argc, char *argv[]) {
 	game_init(&game);
 
 	while(!game_is_finished(&game)) {
-  	game_print(&game, blind);
+	game_print(&game, blind);
 		puts("Please enter the index of a word"
 				" (or 0 to exit).");
 		num = get_code_from_user();
