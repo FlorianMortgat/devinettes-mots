@@ -214,6 +214,7 @@ int get_color(int word_index) {
 int game_print(Game* game, char blind) {
 	int color[2] = {37,37};
 	char w[2][20];
+	char *pw1, *pw2;
 	printf("\033[2J");
 	printf("All words:\n");
 	for (int i = 0; i < C_W; i+=2) {
@@ -234,14 +235,18 @@ int game_print(Game* game, char blind) {
 							: game->board[i+col])
 			);
 		}
+		pw1 = pad20(w[0]);
+		pw2 = pad20(w[1]);
 		printf("%2d \033[%dm%s\033[0m"
 				" %2d \033[%dm%s\033[0m\n",
 				i+1,
 				color[0],
-				pad20(w[0]),
+				pw1,
 				i+2,
 				color[1],
-				pad20(w[1]));
+				pw2);
+		free(pw1);
+		free(pw2);
 	}
 	
 	return 1;
