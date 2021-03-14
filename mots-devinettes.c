@@ -286,8 +286,10 @@ long int randomize_5min() {
 	long int seconds = (long int) time(NULL);
 	// 5 minutes
   /// srand(seconds / 300);
-	//printf("rnd %ld\n", seconds);
 	prng_init(&RND, seconds / 300);
+	//printf("rnd %ld\n", seconds / 300);
+	//printf("test %u\n", prng_next(&RND));
+	//exit(0);
 	return seconds / 300;
 }
 

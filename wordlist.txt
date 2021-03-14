@@ -54,6 +54,7 @@ cacao
 caché
 cadeau
 café
+cage
 camion
 caractère
 carpe
@@ -331,6 +332,8 @@ tablette
 tabouret
 tambour
 tao
+tapis
+tapissier
 tarte
 tartiflette
 tension
