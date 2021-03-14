@@ -21,6 +21,7 @@
 #include "time.h"
 #include "assert.h"
 #include "string.h"
+#include "prng.c"
 
 #define C_W 25
 #define I_TABOO 0
@@ -37,6 +38,8 @@
 
 #define WORDLIST_PATH "wordlist.txt"
 
+prng RND;
+
 /**
  * Returns a pseudo-random number between 0 and
  * upper_boundary (not included).
@@ -46,7 +49,7 @@
  */
 int randint(int upper_boundary) {
 	// 0 <= return value < upper_boundary
-	return rand() % upper_boundary;
+	return prng_next(&RND) % upper_boundary;
 }
 
 int len_utf(char *s) {
@@ -282,7 +285,9 @@ int game_is_finished(Game *game) {
 long int randomize_5min() {
 	long int seconds = (long int) time(NULL);
 	// 5 minutes
-	srand(seconds / 300);
+  /// srand(seconds / 300);
+	//printf("rnd %ld\n", seconds);
+	prng_init(&RND, seconds / 300);
 	return seconds / 300;
 }
 

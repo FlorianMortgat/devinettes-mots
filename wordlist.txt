@@ -58,6 +58,7 @@ camion
 caractère
 carpe
 carrefour
+carriole
 carte
 carton
 casque
@@ -90,6 +91,9 @@ cigare
 citron
 citrouille
 classeur
+clocher
+clarinette
+coca
 coco
 coffre
 concours
@@ -111,7 +115,9 @@ croisade
 cycliste
 cœur
 dentiste
+déranger
 devoir
+diable
 diamant
 doux
 drogue
@@ -138,9 +144,12 @@ film
 fils
 fin
 firmament
+fleuriste
 foie
 forêt
 fou
+fougère
+foule
 fraise
 froid
 fromage
@@ -158,6 +167,7 @@ harmonie
 harpe
 hippopotame
 hotte
+huitre
 humour
 hurlement
 hymne
@@ -185,6 +195,8 @@ lampe
 laser
 lettre
 limite
+lime
+limonade
 limousine
 livre
 lune
@@ -197,7 +209,10 @@ marque
 masse
 maçon
 maître
+minaret
+minaret
 mie
+minaret
 mignon
 migraine
 militaire
@@ -212,6 +227,7 @@ moutarde
 mouton
 méchant
 médicament
+mégaphone
 navire
 noir
 noisette
@@ -239,6 +255,7 @@ photo
 piquant
 pique-nique
 pirate
+piranha
 piscine
 pissenlit
 pizza
@@ -269,6 +286,7 @@ pétale
 pôle
 racine
 radis
+rail
 rasoir
 reine
 rhum
@@ -277,6 +295,7 @@ rival
 rock
 rose
 rouge
+routier
 rouille
 route
 royaume
@@ -313,6 +332,7 @@ tabouret
 tambour
 tao
 tarte
+tartiflette
 tension
 terre
 thon
@@ -333,6 +353,7 @@ uniforme
 urne
 usine
 vache
+vapeur
 vent
 verlan
 vernis
